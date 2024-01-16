@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Dashboard from "../pages/admin/Dashboard";
 import Register from "../pages/user/Register";
 import Login from "../pages/user/Login";
+import FormBiodata from "../pages/user/Biodata";
 
 const AppRouter = () => {
   return (
@@ -10,6 +11,7 @@ const AppRouter = () => {
         <Route index element={<div>Home</div>} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
+        <Route path="form-biodata" element={<FormBiodata />} />
         <Route path="admin">
           <Route path="dashboard" element={<Dashboard />} />
         </Route>

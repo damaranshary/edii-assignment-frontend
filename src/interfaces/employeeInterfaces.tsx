@@ -26,29 +26,60 @@ export interface CandidateEmployee {
   lastEducations: LastEducation[];
 }
 
-export interface WorkExperience {
-  id: number;
-  candidate_employee_id: number;
-  company_name: string;
+export interface EmployeeSchema {
   position: string;
-  work_year: string;
-  salary: number;
+  name: string;
+  identity_number: string;
+  place_and_date_of_birth: string;
+  gender: string;
+  religion: string;
+  blood_type: string;
+  marital_status: string;
+  address_in_identity_card: string;
+  address: string;
+  email: string;
+  phone_number: string;
+  emergency_contact_name: string;
+  skills: string;
+  ready_to_be_placed: string;
+  salary_expectation: number;
+  workExperiences?: WorkExperienceSchema[] | undefined | null | [];
+  trainingExperiences?: TrainingExperienceSchema[] | undefined | null | [];
+  lastEducations: LastEducationSchema[];
 }
 
-export interface TrainingExperience {
-  id: number;
-  candidate_employee_id: number;
-  training_name: string;
-  certificate: number;
-  training_year: string;
+export interface WorkExperienceSchema {
+  company_name?: string;
+  position?: string;
+  work_year?: string;
+  salary?: number;
 }
 
-export interface LastEducation {
+export interface WorkExperience extends WorkExperienceSchema {
   id: number;
   candidate_employee_id: number;
+}
+
+export interface TrainingExperienceSchema {
+  training_name?: string;
+  training_year?: string;
+  certificate?: string;
+}
+
+export interface TrainingExperience extends TrainingExperienceSchema {
+  id: number;
+  candidate_employee_id: number;
+}
+
+export interface LastEducationSchema {
   level: string;
   institution: string;
   major: string;
   graduation_year: string;
   grade: string;
+}
+
+export interface LastEducation extends LastEducationSchema {
+  id: number;
+  candidate_employee_id: number;
 }
