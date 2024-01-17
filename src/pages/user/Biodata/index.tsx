@@ -2,14 +2,17 @@ import * as yup from "yup";
 import { EmployeeSchema } from "../../../interfaces/employeeInterfaces";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createEmployee } from "../../../lib/axios/employeeAxios";
+import { createEmployee, updateEmployee } from "../../../lib/axios/employeeAxios";
 import { useEffect } from "react";
 import TrainingExperienceForm from "../../../components/Form/TrainingExperienceForm";
 import WorkExperienceForm from "../../../components/Form/WorkExperienceForm";
 import EducationForm from "../../../components/Form/EducationForm";
+import { useGetEmployeeById } from "../../../lib/swr/employeeSWR";
 
 const FormBiodata = () => {
   const user = localStorage.getItem("user");
+
+  const { candidateEmployee } = useGetEmployeeById(JSON.parse(user!).id);
 
   // puanjaaaaaaaaaaaaaaaaaaaaaaaang
   const employeeSchema: yup.ObjectSchema<EmployeeSchema> = yup.object().shape({
@@ -37,23 +40,27 @@ const FormBiodata = () => {
       .array()
       .of(
         yup.object().shape({
-          company_name: yup.string().required("Nama perusahaan harus diisi"),
-          position: yup.string().required("Posisi harus diisi"),
-          work_year: yup.string().required("Tahun harus diisi"),
-          salary: yup.number().required("Gaji harus diisi"),
+          company_name: yup.string(),
+          position: yup.string(),
+          work_year: yup.string(),
+          salary: yup
+            .number()
+            .transform((value) => (Number.isNaN(value) ? null : value)),
         }),
       )
-      .optional(),
+      .optional()
+      .nullable(),
     trainingExperiences: yup
       .array()
       .of(
         yup.object().shape({
-          training_name: yup.string().required("Nama pelatihan harus diisi"),
-          training_year: yup.string().required("Tahun harus diisi"),
-          certificate: yup.string()
+          training_name: yup.string(),
+          training_year: yup.string(),
+          certificate: yup.string(),
         }),
       )
-      .optional(),
+      .optional()
+      .nullable(),
     lastEducations: yup
       .array()
       .of(
@@ -73,7 +80,10 @@ const FormBiodata = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({ resolver: yupResolver(employeeSchema) });
+  } = useForm({
+    resolver: yupResolver(employeeSchema),
+    defaultValues: candidateEmployee,
+  });
 
   const handleOnSubmit = async (data: EmployeeSchema) => {
     if (!user) {
@@ -85,18 +95,27 @@ const FormBiodata = () => {
       userId: JSON.parse(user!).id,
     };
 
+    if (candidateEmployee) {
+      await updateEmployee({employee: payload.employee, id: candidateEmployee.id })
+        .then((res) => {
+          alert(res.message);
+        })
+        .catch((err) => alert(err.message));
+      return;
+    }
+
     await createEmployee(payload)
       .then((res) => {
         alert(res.message);
       })
-      .catch((err) => alert(err.message))
+      .catch((err) => alert(err.message));
   };
 
   useEffect(() => {
-    if (errors) {
-      console.log(errors);
+    if (candidateEmployee) {
+      reset(candidateEmployee);
     }
-  }, [errors]);
+  }, [candidateEmployee]);
 
   return (
     <main className="mx-auto flex min-h-screen w-[600px]">

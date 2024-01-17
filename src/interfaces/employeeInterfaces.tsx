@@ -17,7 +17,7 @@ export interface CandidateEmployee {
   phone_number: string;
   emergency_contact_name: string;
   skills: string;
-  ready_to_be_placed: number;
+  ready_to_be_placed: string;
   salary_expectation: number;
   created_at: string;
   updated_at: string;
