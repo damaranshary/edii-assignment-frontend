@@ -2,20 +2,20 @@ import * as yup from "yup";
 import { EmployeeSchema } from "../../../interfaces/employeeInterfaces";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  createEmployee,
-  updateEmployee,
-} from "../../../lib/axios/employeeAxios";
+import { updateEmployee } from "../../../lib/axios/employeeAxios";
 import { useEffect } from "react";
 import TrainingExperienceForm from "../../../components/Form/TrainingExperienceForm";
 import WorkExperienceForm from "../../../components/Form/WorkExperienceForm";
 import EducationForm from "../../../components/Form/EducationForm";
-import { useGetEmployeeByUserId } from "../../../lib/swr/employeeSWR";
+import { useGetEmployeeById } from "../../../lib/swr/employeeSWR";
+import { useParams } from "react-router-dom";
 
-const FormBiodata = () => {
-  const user = localStorage.getItem("user");
+const EditBiodata = () => {
+  const { id: employeeId } = useParams();
 
-  const { candidateEmployee } = useGetEmployeeByUserId(JSON.parse(user!).id);
+  const { candidateEmployee } = useGetEmployeeById(
+    employeeId !== undefined ? employeeId : null,
+  );
 
   // puanjaaaaaaaaaaaaaaaaaaaaaaaang
   const employeeSchema: yup.ObjectSchema<EmployeeSchema> = yup.object().shape({
@@ -85,17 +85,12 @@ const FormBiodata = () => {
     reset,
   } = useForm({
     resolver: yupResolver(employeeSchema),
-    defaultValues: candidateEmployee,
+    defaultValues: candidateEmployee ? candidateEmployee : {},
   });
 
   const handleOnSubmit = async (data: EmployeeSchema) => {
-    if (!user) {
-      return;
-    }
-
     const payload = {
       employee: data,
-      userId: JSON.parse(user!).id,
     };
 
     if (candidateEmployee) {
@@ -109,12 +104,6 @@ const FormBiodata = () => {
         .catch((err) => alert(err.message));
       return;
     }
-
-    await createEmployee(payload)
-      .then((res) => {
-        alert(res.message);
-      })
-      .catch((err) => alert(err.message));
   };
 
   useEffect(() => {
@@ -349,4 +338,4 @@ const FormBiodata = () => {
   );
 };
 
-export default FormBiodata;
+export default EditBiodata;

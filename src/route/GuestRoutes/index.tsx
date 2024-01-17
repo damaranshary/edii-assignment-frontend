@@ -7,7 +7,13 @@ const GuestRoutes = () => {
     return <Outlet />;
   }
 
-  return <Navigate to="/" />;
+  if (user && JSON.parse(user).role === "admin") {
+    return <Navigate to="/dashboard" />;
+  }
+
+  if (user && JSON.parse(user).role === "candidate_employee") {
+    return <Navigate to="/form-biodata" />;
+  }
 };
 
 export default GuestRoutes;

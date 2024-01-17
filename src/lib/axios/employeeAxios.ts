@@ -53,3 +53,11 @@ export const updateEmployee = async ({ employee, id }: UpdateEmployee) => {
 
   return response.data;
 };
+
+export const deleteEmployee = async (id: number) => {
+  const response = await axios.delete(
+    `${import.meta.env.VITE_API_URL}/employees/${id}`,
+  );
+
+  return response.data;
+};
